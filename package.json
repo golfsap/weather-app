@@ -1,7 +1,7 @@
 {
-  "name": "dropdown-menu",
+  "name": "weather-app",
   "version": "1.0.0",
-  "description": "A javascript dropdown menu module.",
+  "description": "A weather forecast app using Visual Crossing API.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
