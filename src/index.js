@@ -1,5 +1,19 @@
 import "./style.css";
 
+const locationField = document.getElementById("location-search");
+const searchBtn = document.getElementById("search-btn");
+
+async function searchWeatherData(e) {
+  e.preventDefault();
+  if (!locationField.value) {
+    alert("Please enter a location.");
+    return;
+  }
+  const location = locationField.value;
+  const extracted = await getAndExtractWeatherData(location);
+  console.log(extracted);
+}
+
 async function getWeatherData(location) {
   let url = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${location}?unitGroup=metric&key=QA8P2CDQXTT568P3L96RWQAPJ&contentType=json`;
 
@@ -36,7 +50,7 @@ function extractWeatherData(rawData) {
       precip: nextDayForecast.precip,
     });
   }
-  console.log(result);
+  //   console.log(result);
   return result;
 }
 
@@ -59,5 +73,8 @@ async function getAndExtractWeatherData(location) {
   return extractWeatherData(rawData);
 }
 
-getAndExtractWeatherData("bangkok");
+// Event listener
+searchBtn.addEventListener("click", (e) => searchWeatherData(e));
+
+// getAndExtractWeatherData("bangkok");
 // console.log(cleanWeatherData);
