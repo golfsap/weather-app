@@ -8,9 +8,30 @@
   <body>
     <h1>Weather App</h1>
     <form action="">
-      <label for="location-search">Enter a location:</label>
-      <input type="text" id="location-search" />
-      <button id="search-btn">Search</button>
+      <div>
+        <label for="location-search">Enter a location:</label>
+        <input type="text" id="location-search" />
+        <button id="search-btn">Search</button>
+      </div>
+
+      <div id="weather-info" style="display: none">
+        <h2 id="address"></h2>
+        <h3 id="resolved-address"></h3>
+        <div id="current-weather">
+          <p id="temperature"></p>
+          <p id="feels-like"></p>
+          <p id="humidity"></p>
+          <p id="uv-index"></p>
+        </div>
+
+        <div id="forecast">
+          <h3>Forecast:</h3>
+          <p id="forecast-date"></p>
+          <p id="temp-max"></p>
+          <p id="temp-min"></p>
+          <p id="precip"></p>
+        </div>
+      </div>
     </form>
   </body>
 </html>

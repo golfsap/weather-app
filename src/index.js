@@ -1,7 +1,9 @@
 import "./style.css";
+import { getWeatherData, extractWeatherData } from "./weather.js";
 
 const locationField = document.getElementById("location-search");
 const searchBtn = document.getElementById("search-btn");
+const weatherInfo = document.getElementById("weather-info");
 
 async function searchWeatherData(e) {
   e.preventDefault();
@@ -10,71 +12,60 @@ async function searchWeatherData(e) {
     return;
   }
   const location = locationField.value;
-  const extracted = await getAndExtractWeatherData(location);
-  console.log(extracted);
-}
 
-async function getWeatherData(location) {
-  let url = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${location}?unitGroup=metric&key=QA8P2CDQXTT568P3L96RWQAPJ&contentType=json`;
+  try {
+    // Fetch and process weather data
+    const weatherData = await getWeatherData(location);
+    const extractedData = extractWeatherData(weatherData);
 
-  const response = await fetch(url, { mode: "cors" });
-  const weatherData = await response.json();
-  //   console.log(weatherData);
-  return weatherData;
-}
-
-function extractWeatherData(rawData) {
-  // destructure and extract data
-  const { resolvedAddress, currentConditions, days } = rawData;
-
-  const result = {
-    resolvedAddress: resolvedAddress,
-    currentWeather: {
-      temperature: currentConditions.temp,
-      feelsLike: currentConditions.feelslike,
-      humidity: currentConditions.humidity,
-      // precip: currentConditions.precip,
-      uvIndex: currentConditions.uvindex,
-    },
-    forecast: [],
-  };
-
-  // Loop through days array to get forecast for the next day
-  if (days && days.length > 0) {
-    const nextDayForecast = days[0];
-
-    result.forecast.push({
-      date: nextDayForecast.datetime,
-      tempMax: nextDayForecast.tempmax,
-      tempMin: nextDayForecast.tempmin,
-      precip: nextDayForecast.precip,
-    });
+    // Display
+    console.log(extractedData);
+    populateWeatherTemplate(extractedData);
+    weatherInfo.style.display = "block";
+  } catch (err) {
+    console.error("Error occured while fetching weather data:", err);
+    alert(
+      "An error occurred while fetching the weather data, Please try again later."
+    );
   }
-  //   console.log(result);
-  return result;
 }
 
-// make a function to handle error
-function handleError(fn) {
-  return function (...params) {
-    return fn(...params).catch(function (err) {
-      // do something with the error!
-      console.error("Oops!", err);
-    });
-  };
+function populateWeatherTemplate(data) {
+  // Fill in the resolved address (location name)
+  document.getElementById("address").textContent = data.address;
+  document.getElementById("resolved-address").innerText =
+    `Weather in ${data.resolvedAddress}`;
+
+  // Fill in current weather information
+  document.getElementById("temperature").innerText =
+    `Temperature: ${data.currentWeather.temperature}°C`;
+  document.getElementById("feels-like").innerText =
+    `Feels like: ${data.currentWeather.feelsLike}°C`;
+  document.getElementById("humidity").innerText =
+    `Humidity: ${data.currentWeather.humidity}%`;
+  document.getElementById("uv-index").innerText =
+    `UV Index: ${data.currentWeather.uvIndex}`;
+
+  // Fill in the forecast data
+  if (data.forecast.length > 0) {
+    const formattedDate = formatDate(data.forecast[0].date);
+
+    document.getElementById("forecast-date").innerText = formattedDate;
+    document.getElementById("temp-max").innerText =
+      `Max Temp: ${data.forecast[0].tempMax}°C`;
+    document.getElementById("temp-min").innerText =
+      `Min Temp: ${data.forecast[0].tempMin}°C`;
+    document.getElementById("precip").innerText =
+      `Precipitation: ${data.forecast[0].precip} mm`;
+  }
 }
 
-// Wrap in a HOC (higher-order function)
-const safeGetWeatherData = handleError(getWeatherData);
-
-// Using async function to await the result
-async function getAndExtractWeatherData(location) {
-  const rawData = await safeGetWeatherData(location);
-  return extractWeatherData(rawData);
+function formatDate(date) {
+  const day = date.slice(-2);
+  const month = date.slice(5, 7);
+  const year = date.slice(0, 4);
+  return `${day}-${month}-${year}`;
 }
 
 // Event listener
 searchBtn.addEventListener("click", (e) => searchWeatherData(e));
-
-// getAndExtractWeatherData("bangkok");
-// console.log(cleanWeatherData);
