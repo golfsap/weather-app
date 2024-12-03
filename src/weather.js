@@ -1,6 +1,6 @@
 // Fetch weather data from the API
-export async function getWeatherData(location) {
-  let url = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${location}?unitGroup=metric&key=QA8P2CDQXTT568P3L96RWQAPJ&contentType=json`;
+export async function getWeatherData(location, unit = "metric") {
+  let url = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${location}?unitGroup=${unit}&key=QA8P2CDQXTT568P3L96RWQAPJ&contentType=json`;
 
   try {
     const response = await fetch(url, { mode: "cors" });

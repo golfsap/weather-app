@@ -5,8 +5,8 @@ const locationField = document.getElementById("location-search");
 const searchBtn = document.getElementById("search-btn");
 const weatherInfo = document.getElementById("weather-info");
 
-async function searchWeatherData(e) {
-  e.preventDefault();
+async function searchWeatherData() {
+  // e.preventDefault();
   if (!locationField.value) {
     alert("Please enter a location.");
     return;
@@ -14,8 +14,11 @@ async function searchWeatherData(e) {
   const location = locationField.value;
 
   try {
+    const currentUnit = document.querySelector(
+      'input[name="unit"]:checked'
+    ).value;
     // Fetch and process weather data
-    const weatherData = await getWeatherData(location);
+    const weatherData = await getWeatherData(location, currentUnit);
     const extractedData = extractWeatherData(weatherData);
 
     // Display
@@ -37,10 +40,13 @@ function populateWeatherTemplate(data) {
     `Weather in ${data.resolvedAddress}`;
 
   // Fill in current weather information
+  const currentUnit = document.querySelector('input[name="unit"]:checked');
+  const unitSymbol = currentUnit.value === "metric" ? "°C" : "°F";
+
   document.getElementById("temperature").innerText =
-    `Temperature: ${data.currentWeather.temperature}°C`;
+    `Temperature: ${data.currentWeather.temperature}${unitSymbol}`;
   document.getElementById("feels-like").innerText =
-    `Feels like: ${data.currentWeather.feelsLike}°C`;
+    `Feels like: ${data.currentWeather.feelsLike}${unitSymbol}`;
   document.getElementById("humidity").innerText =
     `Humidity: ${data.currentWeather.humidity}%`;
   document.getElementById("uv-index").innerText =
@@ -52,13 +58,20 @@ function populateWeatherTemplate(data) {
 
     document.getElementById("forecast-date").innerText = formattedDate;
     document.getElementById("temp-max").innerText =
-      `Max Temp: ${data.forecast[0].tempMax}°C`;
+      `Max Temp: ${data.forecast[0].tempMax}${unitSymbol}`;
     document.getElementById("temp-min").innerText =
-      `Min Temp: ${data.forecast[0].tempMin}°C`;
+      `Min Temp: ${data.forecast[0].tempMin}${unitSymbol}`;
     document.getElementById("precip").innerText =
       `Precipitation: ${data.forecast[0].precip} mm`;
   }
 }
+
+// function handleToggleUnits() {
+//   const city = locationField.value.trim();
+//   if (city) {
+//     searchWeatherData();
+//   }
+// }
 
 function formatDate(date) {
   const day = date.slice(-2);
@@ -68,4 +81,14 @@ function formatDate(date) {
 }
 
 // Event listener
-searchBtn.addEventListener("click", (e) => searchWeatherData(e));
+searchBtn.addEventListener("click", (e) => {
+  e.preventDefault();
+  searchWeatherData();
+});
+
+const radios = document.getElementsByName("unit");
+radios.forEach((radio) => {
+  radio.addEventListener("change", () => {
+    searchWeatherData();
+  });
+});

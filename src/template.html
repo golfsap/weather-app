@@ -12,6 +12,18 @@
         <label for="location-search">Enter a location:</label>
         <input type="text" id="location-search" />
         <button id="search-btn">Search</button>
+        <div class="radio-container">
+          <input
+            type="radio"
+            id="celsiusRadio"
+            name="unit"
+            value="metric"
+            checked
+          />
+          <label for="celsiusRadio"> Celsius (°C) </label>
+          <input type="radio" id="farenheitRadio" name="unit" value="us" />
+          <label for="farenheitRadio"> Farenheit (°F) </label>
+        </div>
       </div>
 
       <div id="weather-info" style="display: none">
